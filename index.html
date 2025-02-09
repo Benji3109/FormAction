@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FormAction</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
+        /* [Styles précédents restent identiques jusqu'à .modal-content] */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -71,21 +73,6 @@
         .resource-item:hover {
             background-color: #e9ecef;
         }
-        .tag {
-            display: inline-block;
-            background-color: #e1e8f0;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            margin-right: 5px;
-        }
-        footer {
-            background-color: #2c3e50;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            margin-top: 50px;
-        }
         .modal {
             display: none;
             position: fixed;
@@ -100,17 +87,10 @@
         }
         .modal-content {
             background-color: white;
-            padding: 20px;
+            padding: 40px;
             border-radius: 10px;
             text-align: center;
-            max-width: 90%;
-            max-height: 90%;
-        }
-        .qr-code {
-            width: 300px;
-            height: 300px;
-            display: block;
-            margin: 0 auto;
+            position: relative;
         }
         .close-button {
             position: absolute;
@@ -118,7 +98,17 @@
             right: 10px;
             font-size: 24px;
             cursor: pointer;
+            color: #2c3e50;
+        }
+        #qrcode {
+            margin: 20px auto;
+        }
+        footer {
+            background-color: #2c3e50;
             color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
         }
         @media (max-width: 768px) {
             .search-bar input {
@@ -151,9 +141,9 @@
         </div>
     </div>
     <div id="qrModal" class="modal">
-        <span class="close-button" onclick="closeModal()">&times;</span>
         <div class="modal-content">
-            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsAQMAAABDsxw2AAAABlBMVEX///8AAABVwtN+AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAEv0lEQVR4nO2aW3LsKAyGZeEFWAqLyNKylCzF+19KJMCOk3bS7nNuVU09zER2bPGBfiEk2+ufVyaTyWQymUwmk8lkMplMJpPJZDKZTCaTyWQymUwmk8lkMplMJpPJZDL9C1JhU0d0gKnWsYiw+XY+k6lbUqtEg5XLtkFsC0SL7JEm3xauIOSsghyP7GiywvAFxBusXsM7rOWJNdGM27K8EEeVkuv7rO0B214sXUFcBHnMuiRHgxV8gwUxYtIL2Rqs7AoAJOl8nVUjjRMWRhHr4tB2Ceu6fMlK8LxnkVx+qQWxpgBYcAEiOxsWIQo53aHSXbgdSGMPK0h2bPUIsdRwQMvKvnUEIBXU2L9d6u6QMOZhebwV+Fjt641YGLrBRk2A7GspkcqplwUQPJhShwWtl6q6XooDUaqFmGgZVsoOLwUcLxuVuVNwY109QiyhirPHYjMzgUf2Niu1UF2YUmpSZI3J79tCnRbNuZ+TSwkWs1JMnmQJVlYTLmVMgN1BW/A7rJK4Dw0WRY/stHJLxMRBPVALlsKwgVbxAUv25VNW5b7UsGtdqYFZQ9ZDI8AJC7PYIbPyxEp4Uas0zARhNFkFELs6K3KoZCLxfsDCLBl2a3kKbPtDrNXlEqhM2e2wBBBTAx3qGutS4GWxDMu3dC1Lq0LTtpblpQuQ+V5LqRvJsRTXXpdgISWvB6fkHy+bMEusUNBSTqzgODqRwcIWa/T4ZpDg8mOWr5YqYoWOQvthGXFYeIdVJ+7laSGn5ZisxNpS4spFQiQc3rLbm/oYXlaJDBjYYqWKxTYsy8KAUGNx4y56WOmABewPWD0jqQUo5wP3ZF1K3LCW1Fh5LsuOWK31OQJvsLxTz2Xhe5aaGbLfZqmlwhIGrRxe6gsRr+5SJpPJZPqW8Nck+VcoqF/jlwnKY/aA5KU9YjQJjlZSibCvX9EGlFEbrVqmOFahD0KrKR7Wt3yxmGXtcg7ROvBKi1iXurDGrw6UmFhNV3iYIZ54CIAYAOYnEXVwYp0uaKDhLkFovNQVhMTJcJlsXL42L0cUbEXMiMWVBFgvBuKXWSd4GpVLURasrOA3WG5RvWGJkIiM9VJfVKJNnw+WFB6rPDhlg0I1Ij+X1QgpIXVXHg9pjCJLtWvVEiRyWDVnV5C/h/7Iu4Tg6FaXRUNy1+uAFeqGZV0pJ6UOt0nzFkt4u9ZerDiI+jZrdTyxhBvsPP011mDsNbqVm3Nxl7Wc2bPpMQvplIrGNy1WVTbVGYtZjPsBy6EwRH6kZL6w0q4cAjpGy3FYEbSS4JhfLKYmLnODhf6x7VhHLF4vQHViSTvnpM/JxsIlSyh01GAl5u3nsnq0jzgR1FVWVq6C7kf3fFbfZKXHrp1mQ+VSopOkr7E0ZAtYHxfYupDlDsuhqBjNm0GLBdvbQC3XZWkYJTLV9WIBBxF30WrFalX4jYWtjcVJQCxegS8lDljBLdpYCDAtluZTEgXKjR5PDFiLWv6OlSRQEXIqvC4csy7ZTf2yM6Jxh1jbX2AV7jcmk8lkMplMJpPJZDKZTCaTyWQymUwmk8lkMplMJpPJZDKZTCaTyfT/0T+YskkxoNcqwwAAAABJRU5ErkJggg==" alt="QR Code" class="qr-code">
+            <span class="close-button" onclick="closeModal()">&times;</span>
+            <div id="qrcode"></div>
         </div>
     </div>
     <footer>
@@ -161,8 +151,22 @@
     </footer>
 
     <script>
+        let qrcode = null;
+
         function showQRCode() {
-            document.getElementById('qrModal').style.display = 'flex';
+            const modal = document.getElementById('qrModal');
+            modal.style.display = 'flex';
+            
+            if (!qrcode) {
+                qrcode = new QRCode(document.getElementById("qrcode"), {
+                    text: "https://benji3109.github.io/MoOdTrAcKeR/",
+                    width: 256,
+                    height: 256,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+            }
         }
 
         function closeModal() {
