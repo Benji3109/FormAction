@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FormAction</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        /* [Styles précédents restent identiques jusqu'à .modal-content] */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -100,9 +98,6 @@
             cursor: pointer;
             color: #2c3e50;
         }
-        #qrcode {
-            margin: 20px auto;
-        }
         footer {
             background-color: #2c3e50;
             color: white;
@@ -143,7 +138,10 @@
     <div id="qrModal" class="modal">
         <div class="modal-content">
             <span class="close-button" onclick="closeModal()">&times;</span>
-            <div id="qrcode"></div>
+            <svg width="300" height="300" viewBox="0 0 21 21">
+                <rect width="100%" height="100%" fill="white"/>
+                <path d="M0,0 h1v1h-1z M2,0 h3v1h-3z M6,0 h1v1h-1z M8,0 h2v1h-2z M11,0 h3v1h-3z M15,0 h6v1h-6z M0,1 h1v3h-1z M2,1 h1v1h-1z M4,1 h1v2h-1z M6,1 h1v2h-1z M8,1 h1v3h-1z M10,1 h1v2h-1z M12,1 h2v1h-2z M15,1 h1v3h-1z M17,1 h1v1h-1z M19,1 h2v3h-2z M2,2 h1v1h-1z M10,2 h1v1h-1z M13,2 h1v2h-1z M17,2 h1v2h-1z M0,4 h7v1h-7z M8,4 h2v1h-2z M11,4 h3v1h-3z M15,4 h6v1h-6z M6,5 h1v2h-1z M8,5 h3v1h-3z M12,5 h1v2h-1z M14,5 h1v4h-1z M17,5 h1v1h-1z M19,5 h2v2h-2z M0,6 h5v1h-5z M8,6 h2v1h-2z M11,6 h1v3h-1z M16,6 h1v2h-1z M0,8 h5v1h-5z M6,8 h3v1h-3z M10,8 h1v1h-1z M12,8 h2v1h-2z M15,8 h2v1h-2z M18,8 h1v1h-1z M6,9 h1v2h-1z M8,9 h1v2h-1z M13,9 h1v2h-1z M15,9 h2v2h-2z M18,9 h1v2h-1z M0,10 h5v1h-5z M10,10 h2v1h-2z M20,10 h1v1h-1z M0,11 h1v2h-1z M2,11 h3v1h-3z M6,11 h2v2h-2z M9,11 h2v2h-2z M12,11 h1v2h-1z M14,11 h1v2h-1z M17,11 h3v1h-3z M20,11 h1v2h-1z M8,12 h1v1h-1z M16,12 h1v1h-1z M0,13 h1v2h-1z M2,13 h3v2h-3z M6,13 h1v2h-1z M8,13 h5v1h-5z M14,13 h3v2h-3z M18,13 h1v2h-1z M20,13 h1v2h-1z M8,14 h1v1h-1z M10,14 h3v1h-3z M0,15 h7v1h-7z M8,15 h5v1h-5z M14,15 h7v1h-7z M6,16 h1v2h-1z M8,16 h3v1h-3z M12,16 h1v2h-1z M14,16 h1v4h-1z M17,16 h1v1h-1z M19,16 h2v2h-2z M0,17 h5v1h-5z M8,17 h2v1h-2z M11,17 h1v3h-1z M16,17 h1v2h-1z M0,19 h5v1h-5z M6,19 h3v1h-3z M10,19 h1v1h-1z M12,19 h2v1h-2z M15,19 h2v1h-2z M18,19 h1v1h-1z M6,20 h1v1h-1z M8,20 h1v1h-1z M13,20 h1v1h-1z M15,20 h2v1h-2z M18,20 h1v1h-1z" fill="black"/>
+            </svg>
         </div>
     </div>
     <footer>
@@ -151,22 +149,8 @@
     </footer>
 
     <script>
-        let qrcode = null;
-
         function showQRCode() {
-            const modal = document.getElementById('qrModal');
-            modal.style.display = 'flex';
-            
-            if (!qrcode) {
-                qrcode = new QRCode(document.getElementById("qrcode"), {
-                    text: "https://benji3109.github.io/MoOdTrAcKeR/",
-                    width: 256,
-                    height: 256,
-                    colorDark: "#000000",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.H
-                });
-            }
+            document.getElementById('qrModal').style.display = 'flex';
         }
 
         function closeModal() {
